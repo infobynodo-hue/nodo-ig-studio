@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Syne } from 'next/font/google'
 import './globals.css'
 import Sidebar from '@/components/Sidebar'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const syne = Syne({ subsets: ['latin'], variable: '--font-syne' })
 
 export const metadata: Metadata = {
   title: 'NODO IG Studio',
@@ -12,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} h-full`}>
-      <body className="h-full flex bg-navy">
+    <html lang="es" className={`${inter.variable} ${syne.variable} h-full`}>
+      <body className="h-full flex bg-surface">
         <Sidebar />
         <main className="flex-1 overflow-y-auto">
           {children}

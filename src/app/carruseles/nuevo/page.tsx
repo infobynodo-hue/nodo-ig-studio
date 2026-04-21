@@ -1,34 +1,64 @@
+import { Sparkles } from 'lucide-react'
+
+const tonos = ['Directo', 'Educativo', 'Polémico']
+const arquetipos = ['Auto (IA decide)', 'Mito vs Realidad', 'Lista educativa', 'Testimonial']
+
 export default function NuevoCarrusel() {
   return (
-    <div className="p-8 max-w-3xl">
-      <div className="mb-10">
-        <p className="text-xs font-mono tracking-widest text-white/30 uppercase mb-2">Nuevo carrusel</p>
-        <h1 className="text-3xl font-bold tracking-tight text-crema">¿De qué va el post?</h1>
-        <p className="text-white/50 mt-1 text-sm">Dale una idea al agente. Él elige el arquetipo y genera el copy.</p>
+    <div className="p-8 max-w-2xl">
+      <div className="mb-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-indigo mb-1">
+          Nuevo carrusel
+        </p>
+        <h1 className="text-2xl font-brand font-bold text-text">
+          ¿De qué va el post?
+        </h1>
+        <p className="text-sm text-muted mt-1">
+          Dale una idea al agente. Él elige el arquetipo y genera el copy completo.
+        </p>
       </div>
 
-      {/* Brief form - placeholder, lógica de agente va aquí */}
-      <div className="bg-[#12111f] border border-white/8 rounded-2xl p-6 space-y-5">
+      <div className="bg-card rounded-2xl border border-border shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-6 space-y-6">
+        {/* Idea */}
         <div>
-          <label className="block text-xs font-mono text-white/40 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-widest text-indigo mb-2">
             Tu idea
           </label>
           <textarea
             rows={4}
-            placeholder="Ej: quiero hablar sobre por qué los dueños de negocio creen que la IA es cara..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-crema placeholder-white/20 focus:outline-none focus:border-purpura/50 resize-none"
+            placeholder="Ej: quiero hablar sobre por qué los dueños de negocio creen que la IA es cara y no es para ellos..."
+            className="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm text-text placeholder-muted
+              outline-none focus:border-[#C8F135] focus:ring-2 focus:ring-[#C8F135]/15 resize-none transition-all"
           />
         </div>
 
+        {/* Arquetipo */}
         <div>
-          <label className="block text-xs font-mono text-white/40 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-widest text-indigo mb-2">
+            Arquetipo
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {arquetipos.map((a) => (
+              <button
+                key={a}
+                className="px-4 py-2.5 rounded-xl border border-border text-sm text-text hover:border-[#C8F135] hover:bg-lima/5 transition-all text-left"
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tono */}
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-widest text-indigo mb-2">
             Tono
           </label>
           <div className="flex gap-2">
-            {['Directo', 'Educativo', 'Polémico'].map((t) => (
+            {tonos.map((t) => (
               <button
                 key={t}
-                className="px-4 py-2 rounded-lg border border-white/10 text-sm text-white/50 hover:border-purpura/50 hover:text-crema transition-colors"
+                className="px-4 py-2 rounded-lg border border-border text-sm text-text hover:border-[#C8F135] hover:bg-lima/5 transition-all"
               >
                 {t}
               </button>
@@ -36,8 +66,10 @@ export default function NuevoCarrusel() {
           </div>
         </div>
 
-        <button className="w-full bg-purpura hover:bg-purpura/80 text-white font-medium py-3 rounded-xl transition-colors text-sm">
-          Generar con IA →
+        {/* CTA */}
+        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-sidebar bg-lima hover:bg-[#D4F53C] transition-colors">
+          <Sparkles size={16} />
+          Generar con IA
         </button>
       </div>
     </div>

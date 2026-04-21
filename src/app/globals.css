@@ -1,24 +1,26 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-navy:    #1a1830;
-  --color-navy-2:  #2a2742;
-  --color-crema:   #F5F1EA;
-  --color-arena:   #ECE6DA;
-  --color-purpura: #7c3aed;
-  --color-magenta: #c026a8;
-  --color-lima:    #C8F135;
+  /* Panel interno NODO */
+  --color-surface:   #F4F6F9;
+  --color-sidebar:   #1E2433;
+  --color-card:      #FFFFFF;
+  --color-border:    #E5E8EF;
+  --color-text:      #1A1F2E;
+  --color-muted:     #9CA3AF;
+  --color-lima:      #C8F135;
+  --color-magenta:   #c026a8;
+  --color-purpura:   #7c3aed;
+  --color-indigo:    #3730a3;
 
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
-  --font-display: var(--font-fraunces);
+  --font-sans:  var(--font-inter);
   --font-brand: var(--font-syne);
 }
 
 * { box-sizing: border-box; }
 
 body {
-  background: #1a1830;
-  color: #F5F1EA;
+  background: #F4F6F9;
+  color: #1A1F2E;
   -webkit-font-smoothing: antialiased;
 }
