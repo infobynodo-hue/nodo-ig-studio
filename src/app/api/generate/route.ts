@@ -10,30 +10,41 @@ import { CarouselData } from '@/types/carousel'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-export async function POST(req: Request) {
-  const { idea, tono = 'Directo', arquetipo = 'ia', cantidad = 3 } = await req.json()
+function getFecha(): string {
+  return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+    .replace(/^(\w)/, c => c.toUpperCase())
+}
 
-  if (!idea?.trim()) {
+export async function POST(req: Request) {
+  const { idea, tono = 'Directo', arquetipo = 'ia', cantidad = 3, modificacion } = await req.json()
+
+  const ideaFinal = modificacion
+    ? `${idea}\n\nMODIFICACIÓN SOLICITADA: ${modificacion}`
+    : idea
+
+  if (!ideaFinal?.trim()) {
     return Response.json({ error: 'Idea requerida' }, { status: 400 })
   }
+
+  const fecha = getFecha()
 
   let prompt: string
   switch (arquetipo) {
     case 'mito-realidad':
-      prompt = buildMitoRealidadPrompt(idea, tono, cantidad)
+      prompt = buildMitoRealidadPrompt(ideaFinal, tono, cantidad, fecha)
       break
     case 'lista':
-      prompt = buildListaPrompt(idea, tono, cantidad)
+      prompt = buildListaPrompt(ideaFinal, tono, cantidad, fecha)
       break
     case 'dato':
-      prompt = buildDatoPrompt(idea, tono, cantidad)
+      prompt = buildDatoPrompt(ideaFinal, tono, cantidad, fecha)
       break
     case 'comparacion':
-      prompt = buildComparacionPrompt(idea, tono, cantidad)
+      prompt = buildComparacionPrompt(ideaFinal, tono, cantidad, fecha)
       break
     case 'ia':
     default:
-      prompt = buildIaEligePrompt(idea, tono)
+      prompt = buildIaEligePrompt(ideaFinal, tono, fecha)
       break
   }
 

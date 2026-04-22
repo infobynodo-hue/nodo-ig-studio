@@ -252,10 +252,11 @@ const SCHEMA_CTA = `{
 
 // ── Prompts por arquetipo ──────────────────────────────────────
 
-export function buildMitoRealidadPrompt(idea: string, tono: string, pares: number): string {
+export function buildMitoRealidadPrompt(idea: string, tono: string, pares: number, fecha: string): string {
   const total = 2 + pares * 2
   return `${NODO_BASE}
 ${LIMITS}
+FECHA ACTUAL: ${fecha} — úsala en el eyebrow de la portada. NUNCA inventes una fecha.
 
 TU TAREA: Generar un carrusel Instagram MITO VS REALIDAD.
 Estructura: portada → [mito → realidad] × ${pares} pares → CTA
@@ -291,10 +292,11 @@ Devuelve SOLO JSON válido:
 `
 }
 
-export function buildListaPrompt(idea: string, tono: string, items: number): string {
+export function buildListaPrompt(idea: string, tono: string, items: number, fecha: string): string {
   const total = 2 + items
   return `${NODO_BASE}
 ${LIMITS}
+FECHA ACTUAL: ${fecha} — úsala en el eyebrow de la portada. NUNCA inventes una fecha.
 
 TU TAREA: Generar un carrusel Instagram LISTA / PASOS.
 Estructura: portada → ${items} items numerados → CTA
@@ -328,10 +330,11 @@ Devuelve SOLO JSON válido:
 `
 }
 
-export function buildDatoPrompt(idea: string, tono: string, datos: number): string {
+export function buildDatoPrompt(idea: string, tono: string, datos: number, fecha: string): string {
   const total = 2 + datos
   return `${NODO_BASE}
 ${LIMITS}
+FECHA ACTUAL: ${fecha} — úsala en el eyebrow de la portada. NUNCA inventes una fecha.
 
 TU TAREA: Generar un carrusel Instagram DATO IMPACTO.
 Estructura: portada → ${datos} datos con estadísticas → CTA
@@ -366,10 +369,11 @@ Devuelve SOLO JSON válido:
 `
 }
 
-export function buildComparacionPrompt(idea: string, tono: string, pares: number): string {
+export function buildComparacionPrompt(idea: string, tono: string, pares: number, fecha: string): string {
   const total = 2 + pares
   return `${NODO_BASE}
 ${LIMITS}
+FECHA ACTUAL: ${fecha} — úsala en el eyebrow de la portada. NUNCA inventes una fecha.
 
 TU TAREA: Generar un carrusel Instagram ANTES / DESPUÉS.
 Estructura: portada → ${pares} comparaciones → CTA
@@ -402,9 +406,10 @@ Devuelve SOLO JSON válido:
 `
 }
 
-export function buildIaEligePrompt(idea: string, tono: string): string {
+export function buildIaEligePrompt(idea: string, tono: string, fecha: string): string {
   return `${NODO_BASE}
 ${LIMITS}
+FECHA ACTUAL: ${fecha} — úsala en el eyebrow de la portada. NUNCA inventes una fecha.
 
 TU TAREA: Elegir el mejor arquetipo para esta idea y generar el carrusel.
 

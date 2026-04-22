@@ -5,6 +5,7 @@ import { Sparkles, Loader2, ArrowLeft, Brain, List, BarChart2, ArrowLeftRight } 
 import Link from 'next/link'
 import { CarouselData } from '@/types/carousel'
 import CarouselPreview from '@/components/CarouselPreview'
+import VoiceButton from '@/components/VoiceButton'
 
 // ── Arquetipos ─────────────────────────────────────────────────
 const ARQUETIPOS = [
@@ -158,10 +159,13 @@ export default function NuevoCarrusel() {
 
         {/* Idea */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-widest text-indigo mb-2">Tu idea</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-semibold uppercase tracking-widest text-indigo">Tu idea</label>
+            <VoiceButton onTranscript={t => setIdea(prev => prev ? `${prev} ${t}` : t)} />
+          </div>
           <textarea
             rows={4} value={idea} onChange={e => setIdea(e.target.value)}
-            placeholder="Ej: los dueños de negocio creen que la IA es solo para grandes empresas..."
+            placeholder="Ej: los dueños de negocio creen que la IA es solo para grandes empresas... (o usa el micrófono)"
             className="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm text-text placeholder-muted outline-none focus:border-[#C8F135] focus:ring-2 focus:ring-[#C8F135]/15 resize-none transition-all"
           />
         </div>

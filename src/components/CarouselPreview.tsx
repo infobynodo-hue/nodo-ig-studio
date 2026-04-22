@@ -2,7 +2,8 @@
 
 import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import { Download, Save, Check, Sparkles } from 'lucide-react'
+import { Download, Save, Check, Sparkles, RefreshCw, Loader2, ChevronDown } from 'lucide-react'
+import VoiceButton from './VoiceButton'
 import {
   CarouselData, Slide,
   SlidePortada, SlideMito, SlideRealidad, SlideCTA,
@@ -287,6 +288,12 @@ export default function CarouselPreview({
   const [currentId, setCurrentId] = useState<string | undefined>(carouselId)
   const exportRefs = useRef<(HTMLDivElement | null)[]>([])
 
+  // Rediseñar state
+  const [showRedisenar, setShowRedisenar] = useState(false)
+  const [instruccion, setInstruccion] = useState('')
+  const [regenerando, setRegenerando] = useState(false)
+  const [errorRegen, setErrorRegen] = useState('')
+
   function updateSlide(index: number, slide: Slide) {
     const slides = [...data.slides]
     slides[index] = slide
@@ -315,6 +322,34 @@ export default function CarouselPreview({
       setSaved(true)
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function regenerate() {
+    if (!instruccion.trim()) return
+    setRegenerando(true)
+    setErrorRegen('')
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: idea || data.tema,
+          tono,
+          arquetipo: data.arquetipo ?? 'ia',
+          modificacion: instruccion,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Error al regenerar')
+      setData(json)
+      setSaved(false)
+      setInstruccion('')
+      setShowRedisenar(false)
+    } catch (e) {
+      setErrorRegen(e instanceof Error ? e.message : 'Error')
+    } finally {
+      setRegenerando(false)
     }
   }
 
@@ -371,6 +406,50 @@ export default function CarouselPreview({
             Exportar todo ({data.slides.length} PNG)
           </button>
         </div>
+      </div>
+
+      {/* Rediseñar panel */}
+      <div className="border border-border rounded-2xl overflow-hidden">
+        <button
+          onClick={() => setShowRedisenar(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-card hover:bg-surface transition-colors text-sm"
+        >
+          <div className="flex items-center gap-2 text-muted">
+            <RefreshCw size={13} />
+            <span className="font-medium">Rediseñar o modificar</span>
+            <span className="text-[11px]">— describe qué quieres cambiar</span>
+          </div>
+          <ChevronDown size={14} className={`text-muted transition-transform ${showRedisenar ? 'rotate-180' : ''}`} />
+        </button>
+        {showRedisenar && (
+          <div className="px-4 pb-4 pt-2 bg-card border-t border-border space-y-3">
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <textarea
+                  rows={2}
+                  value={instruccion}
+                  onChange={e => setInstruccion(e.target.value)}
+                  placeholder="Ej: 'hazlo más polémico', 'usa datos de salud en vez de ventas', 'cambia el tono a educativo y añade más contexto'..."
+                  className="w-full bg-white border border-border rounded-xl px-3 py-2 text-sm text-text placeholder-muted outline-none focus:border-[#C8F135] focus:ring-1 focus:ring-[#C8F135]/15 resize-none pr-10"
+                  onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) regenerate() }}
+                />
+                <div className="absolute bottom-2 right-2">
+                  <VoiceButton onTranscript={t => setInstruccion(prev => prev ? `${prev} ${t}` : t)} />
+                </div>
+              </div>
+              <button
+                onClick={regenerate}
+                disabled={regenerando || !instruccion.trim()}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-sidebar bg-lima hover:bg-[#D4F53C] transition-colors disabled:opacity-40 self-end shrink-0"
+              >
+                {regenerando ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                {regenerando ? 'Generando...' : 'Regenerar'}
+              </button>
+            </div>
+            {errorRegen && <p className="text-xs text-red-500">{errorRegen}</p>}
+            <p className="text-[11px] text-muted">Mantiene el formato actual · ⌘↵ para enviar</p>
+          </div>
+        )}
       </div>
 
       {/* Hidden full-size slides for export */}
