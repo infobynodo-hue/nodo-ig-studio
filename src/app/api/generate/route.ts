@@ -1,41 +1,50 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { NODO_SYSTEM_PROMPT } from '@/lib/nodoContext'
+import {
+  buildMitoRealidadPrompt,
+  buildListaPrompt,
+  buildDatoPrompt,
+  buildComparacionPrompt,
+  buildIaEligePrompt,
+} from '@/lib/nodoContext'
 import { CarouselData } from '@/types/carousel'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 export async function POST(req: Request) {
-  const { idea, tono, pares = 3 } = await req.json()
+  const { idea, tono = 'Directo', arquetipo = 'ia', cantidad = 3 } = await req.json()
 
   if (!idea?.trim()) {
     return Response.json({ error: 'Idea requerida' }, { status: 400 })
   }
 
-  const userMessage = `
-Crea un carrusel MITO VS REALIDAD de Instagram sobre el siguiente tema:
-
-IDEA: ${idea}
-TONO: ${tono || 'Directo'}
-PARES MITO/REALIDAD: ${pares} (total slides: ${2 + pares * 2})
-
-Genera EXACTAMENTE ${pares} pares de mito/realidad (slides ${pares === 1 ? '02 y 03' : pares === 2 ? '02, 03, 04 y 05' : '02, 03, 04, 05, 06 y 07'}).
-Asegúrate de que:
-- Los mitos sean objeciones REALES que escuchan los dueños de negocio en llamadas de venta
-- Las realidades respondan con datos concretos de NODO ONE
-- El copy sea en español latinoamericano, directo y sin corporativismo
-- La portada capture la atención en los primeros 2 segundos
-`
+  let prompt: string
+  switch (arquetipo) {
+    case 'mito-realidad':
+      prompt = buildMitoRealidadPrompt(idea, tono, cantidad)
+      break
+    case 'lista':
+      prompt = buildListaPrompt(idea, tono, cantidad)
+      break
+    case 'dato':
+      prompt = buildDatoPrompt(idea, tono, cantidad)
+      break
+    case 'comparacion':
+      prompt = buildComparacionPrompt(idea, tono, cantidad)
+      break
+    case 'ia':
+    default:
+      prompt = buildIaEligePrompt(idea, tono)
+      break
+  }
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 2000,
-    system: NODO_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userMessage }],
+    max_tokens: 3000,
+    messages: [{ role: 'user', content: prompt }],
   })
 
   const raw = message.content[0].type === 'text' ? message.content[0].text : ''
 
-  // Extract JSON even if Claude wraps it in markdown code blocks
   const jsonMatch = raw.match(/\{[\s\S]*\}/)
   if (!jsonMatch) {
     return Response.json({ error: 'No se pudo generar el carrusel' }, { status: 500 })

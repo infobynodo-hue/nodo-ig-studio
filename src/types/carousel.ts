@@ -37,9 +37,50 @@ export type SlideCTA = {
   subtext: string
 }
 
-export type Slide = SlidePortada | SlideMito | SlideRealidad | SlideCTA
+// Arquetipo: Lista / Pasos
+export type SlideItem = {
+  tipo: 'item'
+  numero: number
+  total: number
+  titulo: string
+  descripcion: string
+  descripcion_negrita: string
+}
+
+// Arquetipo: Dato Impacto
+export type SlideDato = {
+  tipo: 'dato'
+  numero: number
+  total: number
+  stat: string
+  stat_label: string
+  contexto: string
+  contexto_negrita: string
+}
+
+// Arquetipo: Antes / Después
+export type SlideComparacion = {
+  tipo: 'comparacion'
+  numero: number
+  total: number
+  label_a: string
+  texto_a: string
+  label_b: string
+  texto_b: string
+  diferencia: string
+}
+
+export type Slide =
+  | SlidePortada
+  | SlideMito
+  | SlideRealidad
+  | SlideCTA
+  | SlideItem
+  | SlideDato
+  | SlideComparacion
 
 export type CarouselData = {
   tema: string
   slides: Slide[]
+  arquetipo?: string
 }
