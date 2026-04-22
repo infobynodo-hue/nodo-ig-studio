@@ -21,8 +21,9 @@ const baseSlide: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
-// Clamp font size based on text length against a target char count for base size
-function fs(text: string, base: number, targetChars: number, min: number): number {
+// Auto-scales font size based on text length. Override with _fs.
+function autoFs(text: string, base: number, targetChars: number, min: number, override?: number): number {
+  if (override != null) return Math.max(min, override)
   if (!text) return base
   return Math.max(min, Math.floor(base * Math.min(1, targetChars / Math.max(text.length, 1))))
 }
@@ -76,7 +77,8 @@ function boldParts(text: string, bold: string, boldColor: string) {
 // ── Portada ────────────────────────────────────────────────────
 export function SlidePortadaComp({ data }: { data: SlidePortada }) {
   const titleTotal = (data.titulo_pre + data.titulo_tachado + data.titulo_post + data.titulo_lima).length
-  const titleSize = fs('x'.repeat(titleTotal), 80, 40, 44)
+  const numSize = autoFs(data.big_num, 280, 2, 80, data._fs?.num)
+  const titleSize = autoFs('x'.repeat(titleTotal), 80, 40, 44, data._fs?.titulo)
 
   return (
     <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
@@ -86,7 +88,7 @@ export function SlidePortadaComp({ data }: { data: SlidePortada }) {
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 3, color: C.magenta, textTransform: 'uppercase', marginBottom: 16, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
           {data.eyebrow}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 280, lineHeight: 0.85, color: C.navy, letterSpacing: -12, marginBottom: 20, overflow: 'hidden' }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: numSize, lineHeight: 0.88, color: C.navy, letterSpacing: -10, marginBottom: 20, overflow: 'hidden' }}>
           {data.big_num}
         </div>
         <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.navy, letterSpacing: -2, overflow: 'hidden' }}>
@@ -106,7 +108,7 @@ export function SlidePortadaComp({ data }: { data: SlidePortada }) {
 // ── Mito ───────────────────────────────────────────────────────
 export function SlideMitoComp({ data, slideNum, totalSlides }: { data: SlideMito; slideNum: number; totalSlides: number }) {
   const titleTotal = (data.tachado + ' ' + data.continuacion).length
-  const titleSize = fs('x'.repeat(titleTotal), 130, 28, 56)
+  const titleSize = autoFs('x'.repeat(titleTotal), 130, 28, 56, data._fs?.titulo)
 
   return (
     <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
@@ -139,7 +141,7 @@ export function SlideMitoComp({ data, slideNum, totalSlides }: { data: SlideMito
 // ── Realidad ───────────────────────────────────────────────────
 export function SlideRealidadComp({ data, slideNum, totalSlides }: { data: SlideRealidad; slideNum: number; totalSlides: number }) {
   const titleTotal = (data.titulo + ' ' + data.destacado + ' ' + data.titulo_post).length
-  const titleSize = fs('x'.repeat(titleTotal), 120, 30, 52)
+  const titleSize = autoFs('x'.repeat(titleTotal), 120, 30, 52, data._fs?.titulo)
 
   return (
     <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
@@ -171,7 +173,7 @@ export function SlideRealidadComp({ data, slideNum, totalSlides }: { data: Slide
 
 // ── CTA ────────────────────────────────────────────────────────
 export function SlideCTAComp({ data, totalSlides }: { data: SlideCTA; totalSlides: number }) {
-  const palabraSize = Math.min(180, Math.max(60, Math.floor(1400 / Math.max(data.palabra.length, 1))))
+  const palabraSize = autoFs(data.palabra, 180, 7, 60, data._fs?.palabra)
 
   return (
     <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', overflow: 'hidden' }}>
@@ -200,7 +202,7 @@ export function SlideCTAComp({ data, totalSlides }: { data: SlideCTA; totalSlide
 
 // ── Item (Lista / Pasos) ───────────────────────────────────────
 export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem; slideNum: number; totalSlides: number }) {
-  const titleSize = fs(data.titulo, 100, 20, 48)
+  const titleSize = autoFs(data.titulo, 100, 20, 48, data._fs?.titulo)
 
   return (
     <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
@@ -208,13 +210,8 @@ export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem
       <BgLines />
       <Dots />
 
-      {/* Outlined number */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 20, marginBottom: 32, overflow: 'hidden' }}>
-        <div style={{
-          fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 160, lineHeight: 1,
-          color: 'transparent', WebkitTextStroke: `3px ${C.magenta}`,
-          letterSpacing: -6, flexShrink: 0,
-        }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 160, lineHeight: 1, color: 'transparent', WebkitTextStroke: `3px ${C.magenta}`, letterSpacing: -6, flexShrink: 0 }}>
           {String(data.numero).padStart(2, '0')}
         </div>
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 4, color: C.gray, textTransform: 'uppercase', paddingBottom: 8 }}>
@@ -222,12 +219,10 @@ export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem
         </div>
       </div>
 
-      {/* Title */}
       <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.navy, letterSpacing: -1.5, overflow: 'hidden', maxHeight: 360 }}>
         {data.titulo}
       </div>
 
-      {/* Description */}
       <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: C.gray, lineHeight: 1.5, marginTop: 32, maxWidth: '90%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
         {boldParts(data.descripcion, data.descripcion_negrita, C.magenta)}
       </div>
@@ -239,8 +234,8 @@ export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem
 
 // ── Dato Impacto ───────────────────────────────────────────────
 export function SlideDatoComp({ data, slideNum, totalSlides }: { data: SlideDato; slideNum: number; totalSlides: number }) {
-  const statSize = Math.min(260, Math.max(120, Math.floor(1800 / Math.max(data.stat.length, 1))))
-  const labelSize = fs(data.stat_label, 44, 28, 28)
+  const statSize = autoFs(data.stat, 260, 4, 100, data._fs?.stat)
+  const labelSize = autoFs(data.stat_label, 44, 28, 28, data._fs?.label)
 
   return (
     <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
@@ -252,12 +247,10 @@ export function SlideDatoComp({ data, slideNum, totalSlides }: { data: SlideDato
         Dato · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
       </div>
 
-      {/* Big stat */}
       <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: statSize, lineHeight: 0.9, letterSpacing: -6, background: `linear-gradient(135deg, ${C.lima} 0%, #a8e020 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', overflow: 'hidden', maxHeight: 280 }}>
         {data.stat}
       </div>
 
-      {/* Stat label */}
       <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: labelSize, color: C.crema, lineHeight: 1.2, marginTop: 12, maxWidth: '85%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
         {data.stat_label}
       </div>
@@ -275,21 +268,16 @@ export function SlideDatoComp({ data, slideNum, totalSlides }: { data: SlideDato
 
 // ── Comparacion (Antes / Después) ──────────────────────────────
 export function SlideComparacionComp({ data, slideNum, totalSlides }: { data: SlideComparacion; slideNum: number; totalSlides: number }) {
-  const sizeA = fs(data.texto_a, 72, 35, 38)
-  const sizeB = fs(data.texto_b, 72, 35, 38)
-  const diffSize = fs(data.diferencia, 38, 20, 24)
+  const sizeA = autoFs(data.texto_a, 72, 35, 38, data._fs?.texto_a)
+  const sizeB = autoFs(data.texto_b, 72, 35, 38, data._fs?.texto_b)
+  const diffSize = autoFs(data.diferencia, 38, 20, 24, data._fs?.diferencia)
 
   return (
     <div style={{ ...baseSlide, background: C.crema, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <BgLines />
       <Dots />
 
-      {/* Top — ANTES */}
-      <div style={{
-        flex: 1, background: C.navy, padding: '120px 80px 70px',
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-        overflow: 'hidden',
-      }}>
+      <div style={{ flex: 1, background: C.navy, padding: '120px 80px 70px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
         <BgLines dark />
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 5, color: 'rgba(245,241,234,0.4)', textTransform: 'uppercase', marginBottom: 14 }}>
           {data.label_a}
@@ -299,11 +287,8 @@ export function SlideComparacionComp({ data, slideNum, totalSlides }: { data: Sl
         </div>
       </div>
 
-      {/* Center badge */}
       <div style={{
-        position: 'absolute', left: '50%', top: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 10,
+        position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 10,
         background: `linear-gradient(135deg, ${C.magenta} 0%, ${C.purpura} 100%)`,
         borderRadius: 60, padding: '16px 44px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.40)',
@@ -314,12 +299,7 @@ export function SlideComparacionComp({ data, slideNum, totalSlides }: { data: Sl
         </span>
       </div>
 
-      {/* Bottom — DESPUÉS */}
-      <div style={{
-        flex: 1, background: C.crema, padding: '70px 80px 200px',
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-        overflow: 'hidden',
-      }}>
+      <div style={{ flex: 1, background: C.crema, padding: '70px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', overflow: 'hidden' }}>
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 5, color: C.magenta, textTransform: 'uppercase', marginBottom: 14 }}>
           {data.label_b}
         </div>

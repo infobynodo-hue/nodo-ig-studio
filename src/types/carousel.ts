@@ -1,4 +1,8 @@
-export type SlidePortada = {
+// _fs: manual font-size overrides — keys are field names (e.g. 'titulo', 'stat')
+// Values are px sizes. If absent, the component auto-computes the size.
+type FS = { _fs?: Record<string, number> }
+
+export type SlidePortada = FS & {
   tipo: 'portada'
   eyebrow: string
   big_num: string
@@ -8,7 +12,7 @@ export type SlidePortada = {
   titulo_lima: string
 }
 
-export type SlideMito = {
+export type SlideMito = FS & {
   tipo: 'mito'
   numero: number
   total: number
@@ -18,7 +22,7 @@ export type SlideMito = {
   contexto_negrita: string
 }
 
-export type SlideRealidad = {
+export type SlideRealidad = FS & {
   tipo: 'realidad'
   numero: number
   total: number
@@ -29,7 +33,7 @@ export type SlideRealidad = {
   contexto_negrita: string
 }
 
-export type SlideCTA = {
+export type SlideCTA = FS & {
   tipo: 'cta'
   eyebrow: string
   label: string
@@ -37,8 +41,7 @@ export type SlideCTA = {
   subtext: string
 }
 
-// Arquetipo: Lista / Pasos
-export type SlideItem = {
+export type SlideItem = FS & {
   tipo: 'item'
   numero: number
   total: number
@@ -47,8 +50,7 @@ export type SlideItem = {
   descripcion_negrita: string
 }
 
-// Arquetipo: Dato Impacto
-export type SlideDato = {
+export type SlideDato = FS & {
   tipo: 'dato'
   numero: number
   total: number
@@ -58,8 +60,7 @@ export type SlideDato = {
   contexto_negrita: string
 }
 
-// Arquetipo: Antes / Después
-export type SlideComparacion = {
+export type SlideComparacion = FS & {
   tipo: 'comparacion'
   numero: number
   total: number
@@ -83,4 +84,5 @@ export type CarouselData = {
   tema: string
   slides: Slide[]
   arquetipo?: string
+  razon_arquetipo?: string
 }
