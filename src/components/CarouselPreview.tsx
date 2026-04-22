@@ -93,10 +93,11 @@ function SlideEditor({ slide, onChange }: { slide: Slide; onChange: (s: Slide) =
 }
 
 // ── Main component ─────────────────────────────────────────────
-export default function CarouselPreview({ data: initial, idea, tono }: { data: CarouselData; idea?: string; tono?: string }) {
+export default function CarouselPreview({ data: initial, idea, tono, carouselId }: { data: CarouselData; idea?: string; tono?: string; carouselId?: string }) {
   const [data, setData] = useState<CarouselData>(initial)
-  const [saved, setSaved] = useState(false)
+  const [saved, setSaved] = useState(!!carouselId)
   const [saving, setSaving] = useState(false)
+  const [currentId, setCurrentId] = useState<string | undefined>(carouselId)
   const exportRefs = useRef<(HTMLDivElement | null)[]>([])
 
   function updateSlide(index: number, slide: Slide) {
@@ -109,11 +110,21 @@ export default function CarouselPreview({ data: initial, idea, tono }: { data: C
   async function saveDraft() {
     setSaving(true)
     try {
-      await fetch('/api/carousels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tema: data.tema, slides: data.slides, idea, tono }),
-      })
+      if (currentId) {
+        await fetch(`/api/carousels/${currentId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slides: data.slides }),
+        })
+      } else {
+        const res = await fetch('/api/carousels', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tema: data.tema, slides: data.slides, idea, tono }),
+        })
+        const json = await res.json()
+        setCurrentId(json.id)
+      }
       setSaved(true)
     } finally {
       setSaving(false)
