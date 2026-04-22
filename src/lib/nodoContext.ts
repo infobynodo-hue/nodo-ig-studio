@@ -37,19 +37,85 @@ VOZ Y TONO:
 const LIMITS = `
 LÍMITES DE CARACTERES — OBLIGATORIOS (el texto se renderiza en imagen, si superas el límite se corta):
 
-PORTADA:
-  eyebrow: máx 35 caracteres
-  big_num: 1-2 caracteres (solo el número — ej: "4", "78%", "3")
-  titulo_pre: máx 12 caracteres — ES LA PALABRA que va AL LADO del número (ej: "mitos", "datos", "errores")
-    → big_num + titulo_pre se leen JUNTOS como titular: "4 mitos", "3 errores", "78%"
-    → NUNCA dejes big_num solo sin titulo_pre que lo acompañe
-  titulo_tachado: máx 18 caracteres (opcional — solo para mito-realidad. Dejar "" si no aplica)
-  titulo_post: máx 35 caracteres — frase que completa el titular
-  titulo_lima: máx 22 caracteres — frase final con color lima (impacto)
-  → La portada debe leerse como UNA FRASE: "[big_num] [titulo_pre] / [titulo_post] / [titulo_lima]"
-  → Ejemplo correcto: "4 datos / que nadie te dice sobre / responder rápido."
-  → Ejemplo correcto: "3 mitos / sobre la IA que te están / costando clientes."
-  → Ejemplo INCORRECTO: big_num="4", titulo_pre="" → quedaría solo "4" flotando sin sentido
+PORTADA — PROCESO EDITORIAL OBLIGATORIO:
+
+  PASO 1: Escribe la titular completa como la leerías en voz alta.
+    Ejemplo: "Los 4 datos que nadie te dice sobre responder rápido."
+    Ejemplo: "El 78% de tus clientes compra al primero que responde."
+    Ejemplo: "Hoy tu competencia ya está usando IA. ¿Y tú?"
+
+  PASO 2: Identifica el ELEMENTO HÉROE — la palabra o número más visualmente
+    poderoso de esa frase. Ese va en big_num (máx 4 chars).
+    No tiene que ser un número. Puede ser: "78%", "NO", "HOY", "3x", "0".
+    Pregúntate: ¿qué elemento solo de ver ya genera curiosidad o impacto?
+
+  PASO 3: La palabra que inmediatamente sigue al héroe y completa su sentido
+    va en titulo_pre (máx 12 chars). Juntos deben leerse como unidad.
+    Ejemplos de hero + titulo_pre: "4 datos", "78% de tus", "NO todos", "HOY tu competencia"
+
+  PASO 4: El resto de la frase va en titulo_post (máx 38 chars).
+  PASO 5: La frase final con más fuerza — el golpe de cierre — va en titulo_lima (máx 22 chars).
+
+  RESULTADO VISUAL (de arriba a abajo):
+    [eyebrow pequeño]
+    [big_num ENORME]  [titulo_pre grande]   ← se leen JUNTOS
+    [titulo_post mediano]
+    [titulo_lima en verde lima]
+
+  EJEMPLOS COMPLETOS:
+    Idea "4 datos sobre velocidad de respuesta":
+      big_num="4"  titulo_pre="datos"  titulo_post="que nadie te dice sobre"  titulo_lima="responder rápido."
+
+    Idea "la IA no es solo para empresas grandes":
+      big_num="NO"  titulo_pre="es solo"  titulo_post="para empresas grandes."  titulo_lima="Es para ti."
+
+    Idea "78% compra al primero que responde":
+      big_num="78%"  titulo_pre="de tus clientes"  titulo_post="compra al primero"  titulo_lima="que responde."
+
+    Idea "antes y después de tener IA en tu negocio":
+      big_num="→"  titulo_pre="Antes y"  titulo_post="después de tener IA"  titulo_lima="en tu negocio."
+
+  titulo_tachado: máx 18 chars. SOLO úsalo para mito-realidad cuando hay algo concreto que tachar.
+    Para lista, dato, comparacion: déjalo "" (vacío).
+
+MITO:
+  tachado: máx 22 caracteres (se muestra TACHADO en tipografía GIGANTE)
+  continuacion: máx 18 caracteres
+  → TOTAL (tachado + continuacion): máx 35 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 20 caracteres (debe estar dentro del contexto)
+
+REALIDAD:
+  titulo: máx 18 caracteres
+  destacado: máx 22 caracteres (el texto del highlight con gradiente)
+  titulo_post: máx 18 caracteres
+  → TOTAL (titulo + destacado + titulo_post): máx 50 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 25 caracteres (debe estar dentro del contexto)
+
+ITEM (Lista):
+  titulo: máx 45 caracteres
+  descripcion: máx 180 caracteres
+  descripcion_negrita: máx 20 caracteres (debe estar dentro de descripcion)
+
+DATO:
+  stat: máx 8 caracteres (ej: "78%", "<45s", "19x", "$789")
+  stat_label: máx 50 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 20 caracteres (debe estar dentro de contexto)
+
+COMPARACION:
+  label_a: máx 15 caracteres (ej: "SIN NODO", "ANTES")
+  texto_a: máx 55 caracteres
+  label_b: máx 15 caracteres (ej: "CON NODO", "AHORA")
+  texto_b: máx 55 caracteres
+  diferencia: máx 35 caracteres
+
+CTA:
+  eyebrow: máx 65 caracteres
+  label: máx 12 caracteres (ej: "Comentá", "Escribe")
+  palabra: máx 10 caracteres (se muestra ENORME — cuanto más corta, mejor)
+  subtext: máx 110 caracteres
 
 MITO:
   tachado: máx 22 caracteres (se muestra TACHADO en tipografía GIGANTE)
@@ -95,15 +161,15 @@ CTA:
 
 const SCHEMA_PORTADA = `{
   "tipo": "portada",
-  "eyebrow": "— Guía · Abril 2026",
-  "big_num": "4",
-  "titulo_pre": "datos",
+  "eyebrow": "— [etiqueta corta del tema] · [mes año]",
+  "big_num": "[elemento héroe: número, %, símbolo o palabra corta — máx 4 chars]",
+  "titulo_pre": "[palabra que completa el héroe — máx 12 chars]",
   "titulo_tachado": "",
-  "titulo_post": "que nadie te dice sobre",
-  "titulo_lima": "responder rápido."
+  "titulo_post": "[resto de la frase — máx 38 chars]",
+  "titulo_lima": "[cierre con impacto — máx 22 chars]"
 }
-// NOTA: big_num + titulo_pre siempre forman una unidad: "4 datos", "3 mitos", "5 errores"
-// titulo_tachado solo úsalo para mito-realidad. Para lista/dato/comparacion déjalo ""`
+// El agente debe seguir el proceso editorial: titular completa → héroe → distribución en campos
+// big_num NO es obligatoriamente un número. Es el elemento con más fuerza visual de la frase.`
 
 const SCHEMA_MITO = `{
   "tipo": "mito",
@@ -339,6 +405,12 @@ CTA (siempre último): ${SCHEMA_CTA}
 
 IDEA: ${idea}
 TONO: ${tono}
+
+PROCESO ANTES DE GENERAR:
+1. Escribe mentalmente el titular completo de la portada como lo leerías en voz alta.
+2. Elige el arquetipo que más impacto visual y narrativo tiene para esta idea específica.
+3. Para cada slide, escribe primero el copy completo y luego distribúyelo en los campos.
+   Nunca rellenes un campo solo porque el schema lo tiene — cada campo debe justificarse.
 
 Devuelve SOLO JSON válido:
 {
