@@ -75,31 +75,50 @@ function boldParts(text: string, bold: string, boldColor: string) {
 }
 
 // ── Portada ────────────────────────────────────────────────────
+// Layout: [num HUGE] [titulo_pre LARGE] form one hero line that reads together.
+// Supporting lines (titulo_post, titulo_lima) complete the sentence below.
+// titulo_tachado is optional — only shown when non-empty (mito-realidad portadas).
 export function SlidePortadaComp({ data }: { data: SlidePortada }) {
-  const titleTotal = (data.titulo_pre + data.titulo_tachado + data.titulo_post + data.titulo_lima).length
-  const numSize = autoFs(data.big_num, 280, 2, 80, data._fs?.num)
-  const titleSize = autoFs('x'.repeat(titleTotal), 80, 40, 44, data._fs?.titulo)
+  const numSize  = autoFs(data.big_num, 220, 2, 80, data._fs?.num)
+  const preSize  = autoFs(data.titulo_pre, Math.floor(numSize * 0.52), 8, 40, data._fs?.titulo_pre)
+  const restTotal = (data.titulo_tachado + data.titulo_post + data.titulo_lima).length
+  const restSize = autoFs('x'.repeat(restTotal), 70, 36, 38, data._fs?.titulo)
 
   return (
     <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <BgLines />
       <Dots />
-      <div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 3, color: C.magenta, textTransform: 'uppercase', marginBottom: 16, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-          {data.eyebrow}
-        </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: numSize, lineHeight: 0.88, color: C.navy, letterSpacing: -10, marginBottom: 20, overflow: 'hidden' }}>
-          {data.big_num}
-        </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.navy, letterSpacing: -2, overflow: 'hidden' }}>
-          {data.titulo_pre}{' '}
-          <span style={{ textDecoration: 'line-through', textDecorationColor: C.magenta, textDecorationThickness: 5 }}>
-            {data.titulo_tachado}
-          </span>{' '}
-          {data.titulo_post}{' '}
-          <span style={{ color: C.lima }}>{data.titulo_lima}</span>
-        </div>
+
+      {/* Eyebrow */}
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, letterSpacing: 3, color: C.magenta, textTransform: 'uppercase', marginBottom: 28, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+        {data.eyebrow}
       </div>
+
+      {/* Hero line: big_num + titulo_pre read as one unit */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, flexWrap: 'wrap', marginBottom: 12, overflow: 'hidden' }}>
+        <span style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: numSize, lineHeight: 0.88, color: C.navy, letterSpacing: -8 }}>
+          {data.big_num}
+        </span>
+        {data.titulo_pre && (
+          <span style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: preSize, lineHeight: 1, color: C.navy, letterSpacing: -2 }}>
+            {data.titulo_pre}
+          </span>
+        )}
+      </div>
+
+      {/* Supporting lines */}
+      <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: restSize, lineHeight: 1.1, color: C.navy, letterSpacing: -1.5, overflow: 'hidden', maxHeight: 340 }}>
+        {data.titulo_tachado ? (
+          <>
+            <span style={{ textDecoration: 'line-through', textDecorationColor: C.magenta, textDecorationThickness: 4 }}>
+              {data.titulo_tachado}
+            </span>{' '}
+          </>
+        ) : null}
+        {data.titulo_post && <span>{data.titulo_post} </span>}
+        {data.titulo_lima && <span style={{ color: C.lima }}>{data.titulo_lima}</span>}
+      </div>
+
       <Lockup counter="DESLIZA →" />
     </div>
   )

@@ -39,12 +39,17 @@ LÍMITES DE CARACTERES — OBLIGATORIOS (el texto se renderiza en imagen, si sup
 
 PORTADA:
   eyebrow: máx 35 caracteres
-  big_num: 1-2 caracteres (solo el número)
-  titulo_pre: máx 18 caracteres
-  titulo_tachado: máx 18 caracteres
-  titulo_post: máx 18 caracteres
-  titulo_lima: máx 22 caracteres
-  → TOTAL título (pre + tachado + post + lima): máx 55 caracteres
+  big_num: 1-2 caracteres (solo el número — ej: "4", "78%", "3")
+  titulo_pre: máx 12 caracteres — ES LA PALABRA que va AL LADO del número (ej: "mitos", "datos", "errores")
+    → big_num + titulo_pre se leen JUNTOS como titular: "4 mitos", "3 errores", "78%"
+    → NUNCA dejes big_num solo sin titulo_pre que lo acompañe
+  titulo_tachado: máx 18 caracteres (opcional — solo para mito-realidad. Dejar "" si no aplica)
+  titulo_post: máx 35 caracteres — frase que completa el titular
+  titulo_lima: máx 22 caracteres — frase final con color lima (impacto)
+  → La portada debe leerse como UNA FRASE: "[big_num] [titulo_pre] / [titulo_post] / [titulo_lima]"
+  → Ejemplo correcto: "4 datos / que nadie te dice sobre / responder rápido."
+  → Ejemplo correcto: "3 mitos / sobre la IA que te están / costando clientes."
+  → Ejemplo INCORRECTO: big_num="4", titulo_pre="" → quedaría solo "4" flotando sin sentido
 
 MITO:
   tachado: máx 22 caracteres (se muestra TACHADO en tipografía GIGANTE)
@@ -90,13 +95,15 @@ CTA:
 
 const SCHEMA_PORTADA = `{
   "tipo": "portada",
-  "eyebrow": "— Guía · Abril 2025",
-  "big_num": "3",
-  "titulo_pre": "Tu equipo",
-  "titulo_tachado": "trabajando",
-  "titulo_post": "o tu negocio",
-  "titulo_lima": "creciendo."
-}`
+  "eyebrow": "— Guía · Abril 2026",
+  "big_num": "4",
+  "titulo_pre": "datos",
+  "titulo_tachado": "",
+  "titulo_post": "que nadie te dice sobre",
+  "titulo_lima": "responder rápido."
+}
+// NOTA: big_num + titulo_pre siempre forman una unidad: "4 datos", "3 mitos", "5 errores"
+// titulo_tachado solo úsalo para mito-realidad. Para lista/dato/comparacion déjalo ""`
 
 const SCHEMA_MITO = `{
   "tipo": "mito",

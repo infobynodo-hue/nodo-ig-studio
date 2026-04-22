@@ -107,14 +107,20 @@ function EditorPortada({ slide, onChange }: { slide: SlidePortada; onChange: (s:
   return (
     <div className="space-y-2">
       <Field label="Eyebrow" value={slide.eyebrow} onChange={u('eyebrow')} />
-      <FontField label="Número grande" value={slide.big_num} onChange={u('big_num')}
-        computedSize={numComputed} fsKey="num" slide={slide} onFsChange={setFs} />
-      <Field label="Texto antes del tachado" value={slide.titulo_pre} onChange={u('titulo_pre')} />
-      <Field label="Texto tachado (magenta)" value={slide.titulo_tachado} onChange={u('titulo_tachado')} />
-      <Field label="Texto después del tachado" value={slide.titulo_post} onChange={u('titulo_post')} />
-      <Field label="Texto lima (final)" value={slide.titulo_lima} onChange={u('titulo_lima')} />
+      <div className="flex gap-2">
+        <div className="w-24 shrink-0">
+          <FontField label="Número" value={slide.big_num} onChange={u('big_num')}
+            computedSize={numComputed} fsKey="num" slide={slide} onFsChange={setFs} />
+        </div>
+        <div className="flex-1">
+          <Field label="Palabra al lado del número (ej: mitos, datos)" value={slide.titulo_pre} onChange={u('titulo_pre')} />
+        </div>
+      </div>
+      <Field label="Tachado — opcional, solo mito/realidad (dejar vacío si no aplica)" value={slide.titulo_tachado} onChange={u('titulo_tachado')} />
+      <Field label="Frase que completa el titular" value={slide.titulo_post} onChange={u('titulo_post')} />
+      <Field label="Cierre en lima (color verde)" value={slide.titulo_lima} onChange={u('titulo_lima')} />
       <div className="pt-1 border-t border-border">
-        <FontField label="Tamaño del título completo" value="" onChange={() => {}}
+        <FontField label="Tamaño frase inferior" value="" onChange={() => {}}
           computedSize={titleComputed} fsKey="titulo" slide={slide} onFsChange={setFs} />
       </div>
     </div>
