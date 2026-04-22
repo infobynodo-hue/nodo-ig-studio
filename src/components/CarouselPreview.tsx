@@ -95,7 +95,7 @@ function SlideEditor({ slide, onChange }: { slide: Slide; onChange: (s: Slide) =
 // ── Main component ─────────────────────────────────────────────
 export default function CarouselPreview({ data: initial }: { data: CarouselData }) {
   const [data, setData] = useState<CarouselData>(initial)
-  const slidesRef = useRef<(HTMLDivElement | null)[]>([])
+  const exportRefs = useRef<(HTMLDivElement | null)[]>([])
 
   function updateSlide(index: number, slide: Slide) {
     const slides = [...data.slides]
@@ -104,11 +104,9 @@ export default function CarouselPreview({ data: initial }: { data: CarouselData 
   }
 
   async function exportSlide(index: number) {
-    const el = slidesRef.current[index]
+    const el = exportRefs.current[index]
     if (!el) return
-    const child = el.querySelector('[data-slide]') as HTMLElement
-    if (!child) return
-    const png = await toPng(child, { width: 1080, height: 1350, pixelRatio: 2 })
+    const png = await toPng(el, { width: 1080, height: 1350, pixelRatio: 1 })
     const a = document.createElement('a')
     a.href = png
     a.download = `nodo-ig-${String(index + 1).padStart(2, '0')}.png`
@@ -118,7 +116,7 @@ export default function CarouselPreview({ data: initial }: { data: CarouselData 
   async function exportAll() {
     for (let i = 0; i < data.slides.length; i++) {
       await exportSlide(i)
-      await new Promise(r => setTimeout(r, 300))
+      await new Promise(r => setTimeout(r, 400))
     }
   }
 
@@ -139,6 +137,15 @@ export default function CarouselPreview({ data: initial }: { data: CarouselData 
         </button>
       </div>
 
+      {/* Slides ocultos a tamaño real — solo para exportar */}
+      <div style={{ position: 'fixed', left: -9999, top: 0, pointerEvents: 'none', zIndex: -1 }}>
+        {data.slides.map((slide, i) => (
+          <div key={i} ref={el => { exportRefs.current[i] = el }} style={{ width: 1080, height: 1350 }}>
+            <SlideRenderer slide={slide} index={i} total={data.slides.length} />
+          </div>
+        ))}
+      </div>
+
       {/* Slides — scroll horizontal */}
       <div className="flex gap-5 overflow-x-auto pb-4">
         {data.slides.map((slide, i) => (
@@ -148,15 +155,9 @@ export default function CarouselPreview({ data: initial }: { data: CarouselData 
               {String(i + 1).padStart(2, '0')} · {slide.tipo}
             </p>
 
-            {/* Preview */}
-            <div
-              ref={el => { slidesRef.current[i] = el }}
-              style={{ width: 1080 * SCALE, height: 1350 * SCALE, position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}
-            >
-              <div
-                data-slide
-                style={{ width: 1080, height: 1350, transform: `scale(${SCALE})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0 }}
-              >
+            {/* Preview (solo visual, escalado) */}
+            <div style={{ width: 1080 * SCALE, height: 1350 * SCALE, position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+              <div style={{ width: 1080, height: 1350, transform: `scale(${SCALE})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0 }}>
                 <SlideRenderer slide={slide} index={i} total={data.slides.length} />
               </div>
             </div>
