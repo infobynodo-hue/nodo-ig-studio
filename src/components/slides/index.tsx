@@ -2,9 +2,7 @@ import { SlidePortada, SlideMito, SlideRealidad, SlideCTA, SlideItem, SlideDato,
 
 const C = {
   crema:   '#F5F1EA',
-  arena:   '#ECE6DA',
   navy:    '#1a1830',
-  navy2:   '#2a2742',
   magenta: '#c026a8',
   purpura: '#7c3aed',
   lima:    '#C8F135',
@@ -23,6 +21,12 @@ const baseSlide: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
+// Clamp font size based on text length against a target char count for base size
+function fs(text: string, base: number, targetChars: number, min: number): number {
+  if (!text) return base
+  return Math.max(min, Math.floor(base * Math.min(1, targetChars / Math.max(text.length, 1))))
+}
+
 function Lockup({ dark, counter }: { dark?: boolean; counter: string }) {
   return (
     <div style={{
@@ -32,9 +36,9 @@ function Lockup({ dark, counter }: { dark?: boolean; counter: string }) {
       borderTop: `1px solid ${dark ? 'rgba(245,241,234,0.2)' : 'rgba(26,24,48,0.15)'}`,
     }}>
       <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 32, color: dark ? C.crema : C.navy, letterSpacing: -0.5 }}>
-        nodo<sup style={{ fontSize: 16, fontWeight: 500, color: dark ? 'rgba(245,241,234,0.5)' : '#6a6580', marginLeft: 2 }}>one</sup>
+        nodo<sup style={{ fontSize: 16, fontWeight: 500, color: dark ? 'rgba(245,241,234,0.5)' : C.gray, marginLeft: 2 }}>one</sup>
       </span>
-      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, color: dark ? 'rgba(245,241,234,0.6)' : '#6a6580', letterSpacing: 1 }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, color: dark ? 'rgba(245,241,234,0.6)' : C.gray, letterSpacing: 1 }}>
         {counter}
       </span>
     </div>
@@ -71,20 +75,23 @@ function boldParts(text: string, bold: string, boldColor: string) {
 
 // ── Portada ────────────────────────────────────────────────────
 export function SlidePortadaComp({ data }: { data: SlidePortada }) {
+  const titleTotal = (data.titulo_pre + data.titulo_tachado + data.titulo_post + data.titulo_lima).length
+  const titleSize = fs('x'.repeat(titleTotal), 80, 40, 44)
+
   return (
-    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 90px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <BgLines />
       <Dots />
       <div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 3, color: C.magenta, textTransform: 'uppercase', marginBottom: 16 }}>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 3, color: C.magenta, textTransform: 'uppercase', marginBottom: 16, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
           {data.eyebrow}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 340, lineHeight: 0.85, color: C.navy, letterSpacing: -14, marginBottom: 24 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 280, lineHeight: 0.85, color: C.navy, letterSpacing: -12, marginBottom: 20, overflow: 'hidden' }}>
           {data.big_num}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 72, lineHeight: 1, color: C.navy, letterSpacing: -2 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.navy, letterSpacing: -2, overflow: 'hidden' }}>
           {data.titulo_pre}{' '}
-          <span style={{ textDecoration: 'line-through', textDecorationColor: C.magenta, textDecorationThickness: 6 }}>
+          <span style={{ textDecoration: 'line-through', textDecorationColor: C.magenta, textDecorationThickness: 5 }}>
             {data.titulo_tachado}
           </span>{' '}
           {data.titulo_post}{' '}
@@ -98,27 +105,32 @@ export function SlidePortadaComp({ data }: { data: SlidePortada }) {
 
 // ── Mito ───────────────────────────────────────────────────────
 export function SlideMitoComp({ data, slideNum, totalSlides }: { data: SlideMito; slideNum: number; totalSlides: number }) {
+  const titleTotal = (data.tachado + ' ' + data.continuacion).length
+  const titleSize = fs('x'.repeat(titleTotal), 130, 28, 56)
+
   return (
-    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 8, background: C.magenta }} />
       <BgLines />
       <Dots />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 26, letterSpacing: 4, color: C.magenta, textTransform: 'uppercase', marginBottom: 28 }}>
-          <span style={{ width: 46, height: 46, borderRadius: '50%', background: C.magenta, color: C.crema, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 24 }}>✕</span>
-          Mito · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
-        </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 120, lineHeight: 0.96, color: C.navy, letterSpacing: -2.5, marginBottom: 0 }}>
-          <span style={{ display: 'inline-block', position: 'relative' }}>
-            {data.tachado}
-            <span style={{ position: 'absolute', top: '50%', left: -6, right: -6, height: 8, background: C.magenta, transform: 'translateY(-50%) rotate(-2deg)', display: 'block' }} />
-          </span>
-          {' '}{data.continuacion}
-        </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, color: '#6a6580', lineHeight: 1.45, marginTop: 'auto', paddingTop: 40, maxWidth: '88%' }}>
-          {boldParts(data.contexto, data.contexto_negrita, C.magenta)}
-        </div>
+
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 4, color: C.magenta, textTransform: 'uppercase', marginBottom: 28, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ width: 42, height: 42, borderRadius: '50%', background: C.magenta, color: C.crema, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 22, flexShrink: 0 }}>✕</span>
+        Mito · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
       </div>
+
+      <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.0, color: C.navy, letterSpacing: -2, overflow: 'hidden', maxHeight: 420 }}>
+        <span style={{ position: 'relative', display: 'inline' }}>
+          {data.tachado}
+          <span style={{ position: 'absolute', top: '50%', left: -4, right: -4, height: 7, background: C.magenta, transform: 'translateY(-50%) rotate(-1.5deg)', display: 'block', pointerEvents: 'none' }} />
+        </span>
+        {' '}{data.continuacion}
+      </div>
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: C.gray, lineHeight: 1.5, marginTop: 36, maxWidth: '90%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+        {boldParts(data.contexto, data.contexto_negrita, C.magenta)}
+      </div>
+
       <Lockup counter={`${String(slideNum).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`} />
     </div>
   )
@@ -126,27 +138,32 @@ export function SlideMitoComp({ data, slideNum, totalSlides }: { data: SlideMito
 
 // ── Realidad ───────────────────────────────────────────────────
 export function SlideRealidadComp({ data, slideNum, totalSlides }: { data: SlideRealidad; slideNum: number; totalSlides: number }) {
+  const titleTotal = (data.titulo + ' ' + data.destacado + ' ' + data.titulo_post).length
+  const titleSize = fs('x'.repeat(titleTotal), 120, 30, 52)
+
   return (
-    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 8, background: C.lima }} />
       <BgLines dark />
       <Dots dark />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 26, letterSpacing: 4, color: C.lima, textTransform: 'uppercase', marginBottom: 28 }}>
-          <span style={{ width: 46, height: 46, borderRadius: '50%', background: C.lima, color: C.navy, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 22 }}>✓</span>
-          Realidad · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
-        </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 110, lineHeight: 1, color: C.crema, letterSpacing: -2, marginBottom: 0 }}>
-          {data.titulo}{' '}
-          <span style={{ background: 'linear-gradient(135deg, #c026a8 0%, #7c3aed 100%)', color: C.crema, padding: '0 18px', borderRadius: 8, display: 'inline' }}>
-            {data.destacado}
-          </span>{' '}
-          {data.titulo_post}
-        </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, color: 'rgba(245,241,234,0.85)', lineHeight: 1.45, marginTop: 'auto', paddingTop: 40, maxWidth: '90%' }}>
-          {boldParts(data.contexto, data.contexto_negrita, C.lima)}
-        </div>
+
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, letterSpacing: 4, color: C.lima, textTransform: 'uppercase', marginBottom: 28, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ width: 42, height: 42, borderRadius: '50%', background: C.lima, color: C.navy, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 20, flexShrink: 0 }}>✓</span>
+        Realidad · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
       </div>
+
+      <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.crema, letterSpacing: -2, overflow: 'hidden', maxHeight: 440 }}>
+        {data.titulo}{' '}
+        <span style={{ background: 'linear-gradient(135deg, #c026a8 0%, #7c3aed 100%)', color: C.crema, padding: '2px 14px', borderRadius: 8 }}>
+          {data.destacado}
+        </span>{' '}
+        {data.titulo_post}
+      </div>
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: 'rgba(245,241,234,0.85)', lineHeight: 1.5, marginTop: 36, maxWidth: '90%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+        {boldParts(data.contexto, data.contexto_negrita, C.lima)}
+      </div>
+
       <Lockup dark counter={`${String(slideNum).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`} />
     </div>
   )
@@ -154,24 +171,25 @@ export function SlideRealidadComp({ data, slideNum, totalSlides }: { data: Slide
 
 // ── CTA ────────────────────────────────────────────────────────
 export function SlideCTAComp({ data, totalSlides }: { data: SlideCTA; totalSlides: number }) {
-  const palabraSize = Math.min(200, Math.floor(1600 / Math.max(data.palabra.length, 1)))
+  const palabraSize = Math.min(180, Math.max(60, Math.floor(1400 / Math.max(data.palabra.length, 1))))
+
   return (
-    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', overflow: 'hidden' }}>
       <BgLines dark />
       <Dots dark />
       <div style={{ width: '100%' }}>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: C.lima, marginBottom: 16 }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 20, letterSpacing: 3, textTransform: 'uppercase', color: C.lima, marginBottom: 14, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
           {data.eyebrow}
         </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 28, color: 'rgba(245,241,234,0.7)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 26, color: 'rgba(245,241,234,0.65)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 10 }}>
           {data.label}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: palabraSize, lineHeight: 0.92, letterSpacing: -4, color: C.crema, overflow: 'hidden', width: '100%' }}>
-          <span style={{ background: `linear-gradient(180deg, transparent 76%, ${C.lima} 76%, ${C.lima} 93%, transparent 93%)`, padding: '0 16px', display: 'inline-block', maxWidth: '100%' }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: palabraSize, lineHeight: 0.92, letterSpacing: -3, color: C.crema, overflow: 'hidden', width: '100%' }}>
+          <span style={{ background: `linear-gradient(180deg, transparent 76%, ${C.lima} 76%, ${C.lima} 93%, transparent 93%)`, padding: '0 12px', display: 'inline-block', maxWidth: '100%' }}>
             {data.palabra}
           </span>
         </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: 'rgba(245,241,234,0.82)', marginTop: 38, lineHeight: 1.4 }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: 'rgba(245,241,234,0.80)', marginTop: 32, lineHeight: 1.45, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
           {data.subtext}
         </div>
       </div>
@@ -182,39 +200,38 @@ export function SlideCTAComp({ data, totalSlides }: { data: SlideCTA; totalSlide
 
 // ── Item (Lista / Pasos) ───────────────────────────────────────
 export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem; slideNum: number; totalSlides: number }) {
-  const titleSize = Math.min(110, Math.floor(3200 / Math.max(data.titulo.length, 1)))
+  const titleSize = fs(data.titulo, 100, 20, 48)
+
   return (
-    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ ...baseSlide, background: C.crema, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 8, background: C.magenta }} />
       <BgLines />
       <Dots />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {/* Number badge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
-          <div style={{
-            fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 140, lineHeight: 1,
-            color: 'transparent',
-            WebkitTextStroke: `3px ${C.magenta}`,
-            letterSpacing: -4,
-            minWidth: 120,
-          }}>
-            {String(data.numero).padStart(2, '0')}
-          </div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, letterSpacing: 4, color: C.gray, textTransform: 'uppercase' }}>
-            de {String(data.total).padStart(2, '0')}
-          </div>
-        </div>
 
-        {/* Title */}
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.0, color: C.navy, letterSpacing: -2, marginBottom: 0 }}>
-          {data.titulo}
+      {/* Outlined number */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 20, marginBottom: 32, overflow: 'hidden' }}>
+        <div style={{
+          fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 160, lineHeight: 1,
+          color: 'transparent', WebkitTextStroke: `3px ${C.magenta}`,
+          letterSpacing: -6, flexShrink: 0,
+        }}>
+          {String(data.numero).padStart(2, '0')}
         </div>
-
-        {/* Description */}
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, color: C.gray, lineHeight: 1.5, marginTop: 'auto', paddingTop: 44, maxWidth: '90%' }}>
-          {boldParts(data.descripcion, data.descripcion_negrita, C.magenta)}
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 4, color: C.gray, textTransform: 'uppercase', paddingBottom: 8 }}>
+          de {String(data.total).padStart(2, '0')}
         </div>
       </div>
+
+      {/* Title */}
+      <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: titleSize, lineHeight: 1.05, color: C.navy, letterSpacing: -1.5, overflow: 'hidden', maxHeight: 360 }}>
+        {data.titulo}
+      </div>
+
+      {/* Description */}
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: C.gray, lineHeight: 1.5, marginTop: 32, maxWidth: '90%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+        {boldParts(data.descripcion, data.descripcion_negrita, C.magenta)}
+      </div>
+
       <Lockup counter={`${String(slideNum).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`} />
     </div>
   )
@@ -222,36 +239,35 @@ export function SlideItemComp({ data, slideNum, totalSlides }: { data: SlideItem
 
 // ── Dato Impacto ───────────────────────────────────────────────
 export function SlideDatoComp({ data, slideNum, totalSlides }: { data: SlideDato; slideNum: number; totalSlides: number }) {
-  const statSize = Math.min(280, Math.floor(2200 / Math.max(data.stat.length, 1)))
+  const statSize = Math.min(260, Math.max(120, Math.floor(1800 / Math.max(data.stat.length, 1))))
+  const labelSize = fs(data.stat_label, 44, 28, 28)
+
   return (
-    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 8, background: C.lima }} />
       <BgLines dark />
       <Dots dark />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {/* Label above stat */}
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, letterSpacing: 4, color: 'rgba(245,241,234,0.5)', textTransform: 'uppercase', marginBottom: 8 }}>
-          Dato · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
-        </div>
 
-        {/* Big stat */}
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: statSize, lineHeight: 0.9, letterSpacing: -8, background: `linear-gradient(135deg, ${C.lima} 0%, #a8e020 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          {data.stat}
-        </div>
-
-        {/* Stat label */}
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: 42, color: C.crema, lineHeight: 1.2, marginTop: 16, maxWidth: '85%' }}>
-          {data.stat_label}
-        </div>
-
-        {/* Divider */}
-        <div style={{ width: 80, height: 3, background: C.lima, marginTop: 48, marginBottom: 32, borderRadius: 2 }} />
-
-        {/* Context */}
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, color: 'rgba(245,241,234,0.75)', lineHeight: 1.5, maxWidth: '88%' }}>
-          {boldParts(data.contexto, data.contexto_negrita, C.lima)}
-        </div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 4, color: 'rgba(245,241,234,0.4)', textTransform: 'uppercase', marginBottom: 12, overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        Dato · {String(data.numero).padStart(2, '0')} / {String(data.total).padStart(2, '0')}
       </div>
+
+      {/* Big stat */}
+      <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: statSize, lineHeight: 0.9, letterSpacing: -6, background: `linear-gradient(135deg, ${C.lima} 0%, #a8e020 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', overflow: 'hidden', maxHeight: 280 }}>
+        {data.stat}
+      </div>
+
+      {/* Stat label */}
+      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: labelSize, color: C.crema, lineHeight: 1.2, marginTop: 12, maxWidth: '85%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+        {data.stat_label}
+      </div>
+
+      <div style={{ width: 70, height: 3, background: C.lima, marginTop: 40, marginBottom: 28, borderRadius: 2, flexShrink: 0 }} />
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: 'rgba(245,241,234,0.75)', lineHeight: 1.5, maxWidth: '88%', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+        {boldParts(data.contexto, data.contexto_negrita, C.lima)}
+      </div>
+
       <Lockup dark counter={`${String(slideNum).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`} />
     </div>
   )
@@ -259,56 +275,55 @@ export function SlideDatoComp({ data, slideNum, totalSlides }: { data: SlideDato
 
 // ── Comparacion (Antes / Después) ──────────────────────────────
 export function SlideComparacionComp({ data, slideNum, totalSlides }: { data: SlideComparacion; slideNum: number; totalSlides: number }) {
-  const textSizeA = Math.min(72, Math.floor(2800 / Math.max(data.texto_a.length, 1)))
-  const textSizeB = Math.min(72, Math.floor(2800 / Math.max(data.texto_b.length, 1)))
-  const diffSize = Math.min(36, Math.floor(1400 / Math.max(data.diferencia.length, 1)))
+  const sizeA = fs(data.texto_a, 72, 35, 38)
+  const sizeB = fs(data.texto_b, 72, 35, 38)
+  const diffSize = fs(data.diferencia, 38, 20, 24)
 
   return (
-    <div style={{ ...baseSlide, background: C.crema, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ ...baseSlide, background: C.crema, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <BgLines />
       <Dots />
 
-      {/* Top half — ANTES (dark) */}
+      {/* Top — ANTES */}
       <div style={{
-        flex: 1, background: C.navy, padding: '130px 80px 60px',
+        flex: 1, background: C.navy, padding: '120px 80px 70px',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-        position: 'relative',
+        overflow: 'hidden',
       }}>
         <BgLines dark />
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, letterSpacing: 5, color: 'rgba(245,241,234,0.4)', textTransform: 'uppercase', marginBottom: 18 }}>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 5, color: 'rgba(245,241,234,0.4)', textTransform: 'uppercase', marginBottom: 14 }}>
           {data.label_a}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: textSizeA, lineHeight: 1.05, color: C.crema, letterSpacing: -1.5 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: sizeA, lineHeight: 1.1, color: C.crema, letterSpacing: -1.5, overflow: 'hidden', maxHeight: 240 }}>
           {data.texto_a}
         </div>
       </div>
 
-      {/* Center badge — diferencia */}
+      {/* Center badge */}
       <div style={{
         position: 'absolute', left: '50%', top: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 10,
         background: `linear-gradient(135deg, ${C.magenta} 0%, ${C.purpura} 100%)`,
-        borderRadius: 60, padding: '18px 48px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+        borderRadius: 60, padding: '16px 44px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.40)',
         maxWidth: '80%', textAlign: 'center',
-        whiteSpace: 'nowrap',
       }}>
-        <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: diffSize, color: '#fff', letterSpacing: -0.5 }}>
+        <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: diffSize, color: '#fff', letterSpacing: -0.5, whiteSpace: 'nowrap' }}>
           {data.diferencia}
         </span>
       </div>
 
-      {/* Bottom half — DESPUÉS (light) */}
+      {/* Bottom — DESPUÉS */}
       <div style={{
-        flex: 1, background: C.crema, padding: '60px 80px 180px',
+        flex: 1, background: C.crema, padding: '70px 80px 200px',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-        position: 'relative',
+        overflow: 'hidden',
       }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, letterSpacing: 5, color: C.magenta, textTransform: 'uppercase', marginBottom: 18 }}>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 20, letterSpacing: 5, color: C.magenta, textTransform: 'uppercase', marginBottom: 14 }}>
           {data.label_b}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: textSizeB, lineHeight: 1.05, color: C.navy, letterSpacing: -1.5 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: sizeB, lineHeight: 1.1, color: C.navy, letterSpacing: -1.5, overflow: 'hidden', maxHeight: 240 }}>
           {data.texto_b}
         </div>
       </div>

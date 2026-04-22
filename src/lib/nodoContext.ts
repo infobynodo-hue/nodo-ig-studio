@@ -27,46 +27,105 @@ VOZ Y TONO:
 - SÍ usa: "tu equipo", "tu cliente", "la competencia que sí contesta", "plata que se fue".
 `
 
+// ── LÍMITES DE CARACTERES (CRÍTICO — respetar siempre) ─────────
+// Estos límites existen porque los textos se renderizan en slides
+// de 1080×1350px. Si los superas, el texto sale del slide.
+//
+// REGLA GENERAL: menos texto = más impacto visual.
+// Si algo no cabe en el límite, simplifica. No resumas, reformula.
+
+const LIMITS = `
+LÍMITES DE CARACTERES — OBLIGATORIOS (el texto se renderiza en imagen, si superas el límite se corta):
+
+PORTADA:
+  eyebrow: máx 35 caracteres
+  big_num: 1-2 caracteres (solo el número)
+  titulo_pre: máx 18 caracteres
+  titulo_tachado: máx 18 caracteres
+  titulo_post: máx 18 caracteres
+  titulo_lima: máx 22 caracteres
+  → TOTAL título (pre + tachado + post + lima): máx 55 caracteres
+
+MITO:
+  tachado: máx 22 caracteres (se muestra TACHADO en tipografía GIGANTE)
+  continuacion: máx 18 caracteres
+  → TOTAL (tachado + continuacion): máx 35 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 20 caracteres (debe estar dentro del contexto)
+
+REALIDAD:
+  titulo: máx 18 caracteres
+  destacado: máx 22 caracteres (el texto del highlight con gradiente)
+  titulo_post: máx 18 caracteres
+  → TOTAL (titulo + destacado + titulo_post): máx 50 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 25 caracteres (debe estar dentro del contexto)
+
+ITEM (Lista):
+  titulo: máx 45 caracteres
+  descripcion: máx 180 caracteres
+  descripcion_negrita: máx 20 caracteres (debe estar dentro de descripcion)
+
+DATO:
+  stat: máx 8 caracteres (ej: "78%", "<45s", "19x", "$789")
+  stat_label: máx 50 caracteres
+  contexto: máx 160 caracteres
+  contexto_negrita: máx 20 caracteres (debe estar dentro de contexto)
+
+COMPARACION:
+  label_a: máx 15 caracteres (ej: "SIN NODO", "ANTES")
+  texto_a: máx 55 caracteres
+  label_b: máx 15 caracteres (ej: "CON NODO", "AHORA")
+  texto_b: máx 55 caracteres
+  diferencia: máx 35 caracteres
+
+CTA:
+  eyebrow: máx 65 caracteres
+  label: máx 12 caracteres (ej: "Comentá", "Escribe")
+  palabra: máx 10 caracteres (se muestra ENORME — cuanto más corta, mejor)
+  subtext: máx 110 caracteres
+`
+
 // ── Schemas JSON por arquetipo ─────────────────────────────────
 
 const SCHEMA_PORTADA = `{
   "tipo": "portada",
-  "eyebrow": "— Guía · [mes año]",
-  "big_num": "número de puntos/pares como string",
-  "titulo_pre": "texto antes del tachado",
-  "titulo_tachado": "término que se tacha",
-  "titulo_post": "texto intermedio",
-  "titulo_lima": "frase final en color lima."
+  "eyebrow": "— Guía · Abril 2025",
+  "big_num": "3",
+  "titulo_pre": "Tu equipo",
+  "titulo_tachado": "trabajando",
+  "titulo_post": "o tu negocio",
+  "titulo_lima": "creciendo."
 }`
 
 const SCHEMA_MITO = `{
   "tipo": "mito",
   "numero": 1,
   "total": 3,
-  "tachado": "frase del mito (se mostrará tachada)",
-  "continuacion": "resto de la frase.",
-  "contexto": "explicación de por qué existe este mito",
-  "contexto_negrita": "2-4 palabras clave del contexto"
+  "tachado": "La IA es cara",
+  "continuacion": "para mi negocio.",
+  "contexto": "Explicación de por qué existe este mito. Máx 160 caracteres.",
+  "contexto_negrita": "frase clave"
 }`
 
 const SCHEMA_REALIDAD = `{
   "tipo": "realidad",
   "numero": 1,
   "total": 3,
-  "titulo": "inicio de la realidad",
-  "destacado": "frase clave (con gradiente)",
-  "titulo_post": "resto del título.",
-  "contexto": "explicación con datos reales",
-  "contexto_negrita": "dato o frase clave en negrita"
+  "titulo": "Break-even",
+  "destacado": "con 3 clientes",
+  "titulo_post": "nuevos.",
+  "contexto": "Datos concretos que prueban la realidad. Máx 160 caracteres.",
+  "contexto_negrita": "dato clave"
 }`
 
 const SCHEMA_ITEM = `{
   "tipo": "item",
   "numero": 1,
   "total": 5,
-  "titulo": "El punto principal en pocas palabras",
-  "descripcion": "Explicación directa con datos o contexto concreto",
-  "descripcion_negrita": "2-4 palabras clave de la descripción"
+  "titulo": "Responde en 45 segundos",
+  "descripcion": "Descripción directa con dato concreto. Máx 180 caracteres.",
+  "descripcion_negrita": "dato clave"
 }`
 
 const SCHEMA_DATO = `{
@@ -74,9 +133,9 @@ const SCHEMA_DATO = `{
   "numero": 1,
   "total": 4,
   "stat": "78%",
-  "stat_label": "de los clientes compran al primero que responde",
-  "contexto": "Contexto que explica qué significa ese dato en la práctica",
-  "contexto_negrita": "dato concreto que ancla el contexto"
+  "stat_label": "compra al primero que responde",
+  "contexto": "Contexto que conecta el dato con el dueño de negocio. Máx 160 caracteres.",
+  "contexto_negrita": "dato o frase clave"
 }`
 
 const SCHEMA_COMPARACION = `{
@@ -84,18 +143,18 @@ const SCHEMA_COMPARACION = `{
   "numero": 1,
   "total": 3,
   "label_a": "SIN NODO",
-  "texto_a": "Frase corta describiendo la situación previa (problema)",
+  "texto_a": "47 horas para responder a un cliente nuevo.",
   "label_b": "CON NODO",
-  "texto_b": "Frase corta describiendo la situación nueva (solución)",
-  "diferencia": "La diferencia clave en 4-6 palabras"
+  "texto_b": "Respuesta en menos de 45 segundos.",
+  "diferencia": "62x más rápido"
 }`
 
 const SCHEMA_CTA = `{
   "tipo": "cta",
-  "eyebrow": "pregunta gancho para comentarios",
+  "eyebrow": "¿Tu negocio responde o pierde clientes?",
   "label": "Comentá",
-  "palabra": "MITO",
-  "subtext": "y te mando [algo de valor] + [bonus concreto]."
+  "palabra": "RESPONDE",
+  "subtext": "y te mando el caso real de un cliente nuestro + cuánto generó el primer mes."
 }`
 
 // ── Prompts por arquetipo ──────────────────────────────────────
@@ -103,189 +162,187 @@ const SCHEMA_CTA = `{
 export function buildMitoRealidadPrompt(idea: string, tono: string, pares: number): string {
   const total = 2 + pares * 2
   return `${NODO_BASE}
+${LIMITS}
 
-TU TAREA: Generar un carrusel Instagram con el arquetipo MITO VS REALIDAD.
+TU TAREA: Generar un carrusel Instagram MITO VS REALIDAD.
 Estructura: portada → [mito → realidad] × ${pares} pares → CTA
 Total slides: ${total}
-
-Devuelve SOLO JSON válido con esta estructura:
-{
-  "tema": "tema central del carrusel",
-  "arquetipo": "mito-realidad",
-  "slides": [
-    ${SCHEMA_PORTADA},
-    ${SCHEMA_MITO},
-    ${SCHEMA_REALIDAD},
-    ... (repetir mito+realidad hasta ${pares} pares) ...
-    ${SCHEMA_CTA}
-  ]
-}
-
-IDEA: ${idea}
-TONO: ${tono}
-PARES: ${pares} (genera exactamente ${pares} pares mito/realidad)
-
-Reglas:
-- Los mitos deben ser objeciones REALES que escuchan los dueños de negocio
-- Las realidades responden con datos concretos de NODO ONE
-- Copy en español latinoamericano, directo, sin corporativismo
-`
-}
-
-export function buildListaPrompt(idea: string, tono: string, items: number): string {
-  const total = 2 + items
-  return `${NODO_BASE}
-
-TU TAREA: Generar un carrusel Instagram con el arquetipo LISTA / PASOS.
-Estructura: portada → ${items} items numerados → CTA
-Total slides: ${total}
-
-Devuelve SOLO JSON válido con esta estructura:
-{
-  "tema": "tema central del carrusel",
-  "arquetipo": "lista",
-  "slides": [
-    ${SCHEMA_PORTADA},
-    ${SCHEMA_ITEM},
-    ... (${items} items en total) ...
-    ${SCHEMA_CTA}
-  ]
-}
-
-IDEA: ${idea}
-TONO: ${tono}
-ITEMS: ${items}
-
-Reglas:
-- Cada item es una razón, paso, error o verdad concreta y accionable
-- Ordénalos de menor a mayor impacto (el último debe ser el más fuerte)
-- Usa datos de NODO ONE donde encaje naturalmente, no en todos
-`
-}
-
-export function buildDatoPrompt(idea: string, tono: string, datos: number): string {
-  const total = 2 + datos
-  return `${NODO_BASE}
-
-TU TAREA: Generar un carrusel Instagram con el arquetipo DATO IMPACTO.
-Estructura: portada → ${datos} datos con estadísticas → CTA
-Total slides: ${total}
-
-Devuelve SOLO JSON válido con esta estructura:
-{
-  "tema": "tema central del carrusel",
-  "arquetipo": "dato",
-  "slides": [
-    ${SCHEMA_PORTADA},
-    ${SCHEMA_DATO},
-    ... (${datos} slides de dato en total) ...
-    ${SCHEMA_CTA}
-  ]
-}
-
-IDEA: ${idea}
-TONO: ${tono}
-DATOS: ${datos}
-
-Reglas:
-- Cada stat debe ser un número impactante real (de NODO ONE o fuentes reales del mercado)
-- El stat_label explica en pocas palabras QUÉ mide ese número
-- El contexto conecta el dato con la realidad del dueño de negocio
-`
-}
-
-export function buildComparacionPrompt(idea: string, tono: string, pares: number): string {
-  const total = 2 + pares
-  return `${NODO_BASE}
-
-TU TAREA: Generar un carrusel Instagram con el arquetipo ANTES / DESPUÉS.
-Estructura: portada → ${pares} comparaciones → CTA
-Total slides: ${total}
-
-Devuelve SOLO JSON válido con esta estructura:
-{
-  "tema": "tema central del carrusel",
-  "arquetipo": "comparacion",
-  "slides": [
-    ${SCHEMA_PORTADA},
-    ${SCHEMA_COMPARACION},
-    ... (${pares} slides de comparación en total) ...
-    ${SCHEMA_CTA}
-  ]
-}
 
 IDEA: ${idea}
 TONO: ${tono}
 PARES: ${pares}
 
 Reglas:
-- label_a / label_b son etiquetas cortas (SIN NODO / CON NODO, ANTES / AHORA, etc.)
-- Los textos deben ser frases cortas que contrasten visualmente (máx 60 caracteres c/u)
-- La "diferencia" es el insight central: la frase que resume el cambio (4-8 palabras)
+- Los mitos son objeciones REALES de dueños de negocio. Frases cortas que se leen de un vistazo.
+- Las realidades responden con datos de NODO ONE. El "destacado" es la frase más poderosa.
+- RESPETA los límites de caracteres — el texto se imprime en imagen.
+
+Devuelve SOLO JSON válido:
+{
+  "tema": "tema del carrusel",
+  "arquetipo": "mito-realidad",
+  "slides": [
+    ${SCHEMA_PORTADA},
+    ${SCHEMA_MITO},
+    ${SCHEMA_REALIDAD},
+    ${SCHEMA_CTA}
+  ]
+}
+`
+}
+
+export function buildListaPrompt(idea: string, tono: string, items: number): string {
+  const total = 2 + items
+  return `${NODO_BASE}
+${LIMITS}
+
+TU TAREA: Generar un carrusel Instagram LISTA / PASOS.
+Estructura: portada → ${items} items numerados → CTA
+Total slides: ${total}
+
+IDEA: ${idea}
+TONO: ${tono}
+ITEMS: ${items}
+
+Reglas:
+- Cada item = una razón, paso, error o verdad concreta y accionable.
+- Ordena de menor a mayor impacto. El último debe ser el más fuerte.
+- El título de cada item debe ser corto y memorable (máx 45 chars).
+- RESPETA los límites de caracteres.
+
+Devuelve SOLO JSON válido:
+{
+  "tema": "tema del carrusel",
+  "arquetipo": "lista",
+  "slides": [
+    ${SCHEMA_PORTADA},
+    ${SCHEMA_ITEM},
+    ${SCHEMA_CTA}
+  ]
+}
+`
+}
+
+export function buildDatoPrompt(idea: string, tono: string, datos: number): string {
+  const total = 2 + datos
+  return `${NODO_BASE}
+${LIMITS}
+
+TU TAREA: Generar un carrusel Instagram DATO IMPACTO.
+Estructura: portada → ${datos} datos con estadísticas → CTA
+Total slides: ${total}
+
+IDEA: ${idea}
+TONO: ${tono}
+DATOS: ${datos}
+
+Reglas:
+- Cada stat debe ser un número real e impactante (de NODO ONE o del mercado).
+- El stat_label explica QUÉ mide ese número en 50 chars o menos.
+- El contexto conecta el dato con la realidad del dueño de negocio.
+- RESPETA los límites de caracteres.
+
+Devuelve SOLO JSON válido:
+{
+  "tema": "tema del carrusel",
+  "arquetipo": "dato",
+  "slides": [
+    ${SCHEMA_PORTADA},
+    ${SCHEMA_DATO},
+    ${SCHEMA_CTA}
+  ]
+}
+`
+}
+
+export function buildComparacionPrompt(idea: string, tono: string, pares: number): string {
+  const total = 2 + pares
+  return `${NODO_BASE}
+${LIMITS}
+
+TU TAREA: Generar un carrusel Instagram ANTES / DESPUÉS.
+Estructura: portada → ${pares} comparaciones → CTA
+Total slides: ${total}
+
+IDEA: ${idea}
+TONO: ${tono}
+PARES: ${pares}
+
+Reglas:
+- Cada comparación muestra UN contraste concreto y visual.
+- Los textos deben ser frases cortas que contrasten (máx 55 chars cada uno).
+- La "diferencia" es el insight del cambio (máx 35 chars).
+- RESPETA los límites de caracteres.
+
+Devuelve SOLO JSON válido:
+{
+  "tema": "tema del carrusel",
+  "arquetipo": "comparacion",
+  "slides": [
+    ${SCHEMA_PORTADA},
+    ${SCHEMA_COMPARACION},
+    ${SCHEMA_CTA}
+  ]
+}
 `
 }
 
 export function buildIaEligePrompt(idea: string, tono: string): string {
   return `${NODO_BASE}
+${LIMITS}
 
-TU TAREA: Eres el estratega de contenido de NODO ONE. Vas a:
-1. Analizar la idea del usuario
-2. Elegir el arquetipo más efectivo para esa idea
-3. Decidir cuántos slides de contenido usar (entre 3 y 5)
-4. Generar el carrusel completo
+TU TAREA: Elegir el mejor arquetipo para esta idea y generar el carrusel.
 
-ARQUETIPOS DISPONIBLES:
-- "mito-realidad": Ideal para destruir creencias falsas del mercado. Alterna mito (tachado) con realidad (dato). Slides: pares de 2.
-- "lista": Ideal para tips, razones, errores o pasos. Cada slide = un punto. 3-5 items.
-- "dato": Ideal cuando hay estadísticas impactantes que narran la historia. 3-5 datos.
-- "comparacion": Ideal para mostrar transformación. Antes/después en split visual. 3-4 comparaciones.
+ARQUETIPOS DISPONIBLES — elige basándote en la naturaleza de la idea:
 
-PRINCIPIOS DE UN BUEN CARRUSEL DE INSTAGRAM:
-- Slide 1 (portada): Detiene el scroll en los primeros 2 segundos. Gran número + título con tensión.
-- Slides de contenido: Cada uno debe valer la pena por sí solo. Progresión de impacto.
-- Último slide de contenido: El más fuerte, el dato más contundente o el cierre más memorable.
-- CTA: Pregunta específica que genera comentarios. Promete algo de valor a cambio.
-- Total ideal: 6-8 slides (portada + 4-6 contenido + CTA).
+1. "mito-realidad" → Úsalo SOLO si la idea menciona creencias falsas, objeciones, o frases tipo "creen que...", "dicen que...", "la gente piensa que...". Genera 2-3 pares.
 
-SCHEMAS disponibles según arquetipo elegido:
+2. "lista" → Úsalo si la idea es sobre múltiples puntos, razones, pasos, errores o consejos. Es el formato más versátil. Genera 4-5 items.
 
-Para "mito-realidad":
-  slides: [portada, mito, realidad, mito, realidad, ...mito, realidad, cta]
-  ${SCHEMA_MITO}
-  ${SCHEMA_REALIDAD}
+3. "dato" → Úsalo si la idea gira en torno a estadísticas impactantes o verdades numéricas del mercado. Genera 3-4 datos.
 
-Para "lista":
-  slides: [portada, item, item, item, ...item, cta]
-  ${SCHEMA_ITEM}
+4. "comparacion" → Úsalo si la idea trata sobre transformación, cambio visible, antes/después, o "cómo era vs cómo es". Genera 3 comparaciones.
 
-Para "dato":
-  slides: [portada, dato, dato, dato, ...dato, cta]
-  ${SCHEMA_DATO}
+IMPORTANTE:
+- NO elijas mito-realidad por defecto. Analiza la idea primero.
+- El formato con más impacto visual para ESTA idea específica gana.
+- Si la idea tiene múltiples puntos → lista. Si hay estadísticas → dato. Si hay antes/después → comparacion. Si hay objeciones → mito-realidad.
 
-Para "comparacion":
-  slides: [portada, comparacion, comparacion, ...comparacion, cta]
-  ${SCHEMA_COMPARACION}
+SCHEMAS según el arquetipo que elijas:
 
-Portada (siempre igual):
-  ${SCHEMA_PORTADA}
+Si eliges "mito-realidad":
+  slides: [portada, mito, realidad, ...pares..., cta]
+  Mito: ${SCHEMA_MITO}
+  Realidad: ${SCHEMA_REALIDAD}
 
-CTA (siempre al final):
-  ${SCHEMA_CTA}
+Si eliges "lista":
+  slides: [portada, item, item, item, item, item, cta] (4-5 items)
+  Item: ${SCHEMA_ITEM}
+
+Si eliges "dato":
+  slides: [portada, dato, dato, dato, dato, cta] (3-4 datos)
+  Dato: ${SCHEMA_DATO}
+
+Si eliges "comparacion":
+  slides: [portada, comparacion, comparacion, comparacion, cta]
+  Comparacion: ${SCHEMA_COMPARACION}
+
+Portada (siempre primera): ${SCHEMA_PORTADA}
+CTA (siempre último): ${SCHEMA_CTA}
+
+IDEA: ${idea}
+TONO: ${tono}
 
 Devuelve SOLO JSON válido:
 {
   "tema": "tema central",
   "arquetipo": "el que elegiste",
-  "razon_arquetipo": "1 frase explicando por qué elegiste este formato para esta idea",
+  "razon_arquetipo": "1 frase: por qué este formato encaja mejor con esta idea",
   "slides": [ ... ]
 }
 
-IDEA DEL USUARIO: ${idea}
-TONO: ${tono}
-
-Elige el formato que más impacto visual y narrativo genere para esta idea específica.
+RESPETA los límites de caracteres — el texto se imprime directamente en imagen.
 `
 }
 
-// Mantener compatibilidad con el export viejo
 export const NODO_SYSTEM_PROMPT = NODO_BASE
