@@ -160,23 +160,24 @@ export function SlideRealidadComp({ data, slideNum, totalSlides }: { data: Slide
 }
 
 export function SlideCTAComp({ data, totalSlides }: { data: SlideCTA; totalSlides: number }) {
+  const palabraSize = Math.min(200, Math.floor(1600 / Math.max(data.palabra.length, 1)))
   return (
     <div style={{ ...baseSlide, background: C.navy, padding: '110px 80px 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
       <BgLines dark />
       <Dots dark />
-      <div>
+      <div style={{ width: '100%' }}>
         <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: C.lima, marginBottom: 16 }}>
           {data.eyebrow}
         </div>
         <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 28, color: 'rgba(245,241,234,0.7)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
           {data.label}
         </div>
-        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 200, lineHeight: 0.92, letterSpacing: -8, color: C.crema }}>
-          <span style={{ background: `linear-gradient(180deg, transparent 76%, ${C.lima} 76%, ${C.lima} 93%, transparent 93%)`, padding: '0 16px' }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: palabraSize, lineHeight: 0.92, letterSpacing: -4, color: C.crema, overflow: 'hidden', width: '100%' }}>
+          <span style={{ background: `linear-gradient(180deg, transparent 76%, ${C.lima} 76%, ${C.lima} 93%, transparent 93%)`, padding: '0 16px', display: 'inline-block', maxWidth: '100%' }}>
             {data.palabra}
           </span>
         </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: 'rgba(245,241,234,0.82)', marginTop: 38, maxWidth: 700, lineHeight: 1.4 }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, color: 'rgba(245,241,234,0.82)', marginTop: 38, lineHeight: 1.4 }}>
           {data.subtext}
         </div>
       </div>

@@ -28,7 +28,9 @@ VOZ Y TONO:
 
 TU TAREA:
 Generar el copy de un carrusel de Instagram con el arquetipo MITO VS REALIDAD.
-El carrusel tiene 8 slides: portada, 3 mitos, 3 realidades (alternados), CTA final.
+El número de pares mito/realidad lo indica el usuario (1, 2 o 3 pares).
+Estructura siempre: portada → [mito → realidad] × N pares → CTA final.
+Total slides = 2 + (N pares × 2).
 
 Devuelve SOLO JSON válido con esta estructura exacta, sin texto adicional:
 {

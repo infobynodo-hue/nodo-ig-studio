@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import { Download } from 'lucide-react'
+import { Download, Save, Check } from 'lucide-react'
 import { CarouselData, Slide, SlidePortada, SlideMito, SlideRealidad, SlideCTA } from '@/types/carousel'
 import { SlidePortadaComp, SlideMitoComp, SlideRealidadComp, SlideCTAComp } from './slides'
 
@@ -93,14 +93,31 @@ function SlideEditor({ slide, onChange }: { slide: Slide; onChange: (s: Slide) =
 }
 
 // ── Main component ─────────────────────────────────────────────
-export default function CarouselPreview({ data: initial }: { data: CarouselData }) {
+export default function CarouselPreview({ data: initial, idea, tono }: { data: CarouselData; idea?: string; tono?: string }) {
   const [data, setData] = useState<CarouselData>(initial)
+  const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
   const exportRefs = useRef<(HTMLDivElement | null)[]>([])
 
   function updateSlide(index: number, slide: Slide) {
     const slides = [...data.slides]
     slides[index] = slide
     setData({ ...data, slides })
+    setSaved(false)
+  }
+
+  async function saveDraft() {
+    setSaving(true)
+    try {
+      await fetch('/api/carousels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tema: data.tema, slides: data.slides, idea, tono }),
+      })
+      setSaved(true)
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function exportSlide(index: number) {
@@ -128,13 +145,21 @@ export default function CarouselPreview({ data: initial }: { data: CarouselData 
           <p className="text-xs font-semibold uppercase tracking-widest text-indigo">Preview</p>
           <h2 className="text-lg font-brand font-bold text-text mt-0.5">{data.tema}</h2>
         </div>
-        <button
-          onClick={exportAll}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-sidebar bg-lima hover:bg-[#D4F53C] transition-colors"
-        >
-          <Download size={15} />
-          Exportar todo ({data.slides.length} slides)
-        </button>
+        <div className="flex gap-2">
+          <button onClick={saveDraft} disabled={saving || saved}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors border ${
+              saved ? 'border-emerald-400 text-emerald-700 bg-emerald-50' : 'border-border text-muted hover:text-text bg-card'
+            }`}
+          >
+            {saved ? <><Check size={14} /> Guardado</> : <><Save size={14} /> Guardar borrador</>}
+          </button>
+          <button onClick={exportAll}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-sidebar bg-lima hover:bg-[#D4F53C] transition-colors"
+          >
+            <Download size={15} />
+            Exportar todo ({data.slides.length} PNG)
+          </button>
+        </div>
       </div>
 
       {/* Slides ocultos a tamaño real — solo para exportar */}

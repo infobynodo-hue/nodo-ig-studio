@@ -5,7 +5,7 @@ import { CarouselData } from '@/types/carousel'
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 export async function POST(req: Request) {
-  const { idea, tono } = await req.json()
+  const { idea, tono, pares = 3 } = await req.json()
 
   if (!idea?.trim()) {
     return Response.json({ error: 'Idea requerida' }, { status: 400 })
@@ -16,7 +16,9 @@ Crea un carrusel MITO VS REALIDAD de Instagram sobre el siguiente tema:
 
 IDEA: ${idea}
 TONO: ${tono || 'Directo'}
+PARES MITO/REALIDAD: ${pares} (total slides: ${2 + pares * 2})
 
+Genera EXACTAMENTE ${pares} pares de mito/realidad (slides ${pares === 1 ? '02 y 03' : pares === 2 ? '02, 03, 04 y 05' : '02, 03, 04, 05, 06 y 07'}).
 Asegúrate de que:
 - Los mitos sean objeciones REALES que escuchan los dueños de negocio en llamadas de venta
 - Las realidades respondan con datos concretos de NODO ONE
